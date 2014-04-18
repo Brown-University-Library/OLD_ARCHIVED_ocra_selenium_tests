@@ -5,6 +5,7 @@ from selenium import webdriver
 
 
 class HomePageLoginTest( unittest.TestCase ):
+    """ Tests home-page login buttons. """
 
     def setUp(self):
         self.driver = webdriver.Firefox()
