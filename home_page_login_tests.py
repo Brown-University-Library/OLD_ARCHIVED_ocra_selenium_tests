@@ -11,7 +11,6 @@ class HomePageLoginTest( unittest.TestCase ):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
         self.base_url = os.environ.get( 'OCRA_TESTS__LOGIN_BASE_URL' )
-
         # setup
         self.USERNAME = os.environ.get( 'OCRA_TESTS__LIBSTAFF_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__LIBSTAFF_PASSWORD' )
@@ -31,7 +30,6 @@ class HomePageLoginTest( unittest.TestCase ):
         # login
         driver = self._log_into_shib( driver )
         # test for lib-staff page
-        driver.find_element_by_css_selector("button[type=\"submit\"]").click()
         self.assertTrue( u'reserves/staff/menu.php' in driver.current_url )
 
     def test_itg_staff_login(self):
@@ -45,7 +43,6 @@ class HomePageLoginTest( unittest.TestCase ):
         # login
         driver = self._log_into_shib( driver )
         # test for lib-staff page
-        driver.find_element_by_css_selector("button[type=\"submit\"]").click()
         self.assertTrue( u'reserves/staff/menu_itg.php' in driver.current_url )
 
     def _log_into_shib( self, driver ):
@@ -56,6 +53,7 @@ class HomePageLoginTest( unittest.TestCase ):
         driver.find_element_by_id("username").send_keys( self.USERNAME )
         driver.find_element_by_id("password").clear()
         driver.find_element_by_id("password").send_keys( self.PASSWORD )
+        driver.find_element_by_css_selector("button[type=\"submit\"]").click()
         return driver
 
     ##
