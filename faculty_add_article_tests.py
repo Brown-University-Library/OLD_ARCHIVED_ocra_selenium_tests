@@ -10,12 +10,31 @@ class FacultyAddArticleTest( unittest.TestCase ):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
-        self.base_url = os.environ.get( 'OCRA_TESTS__LOGIN_BASE_URL' )
+        self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
+        self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
+        self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
+        self.driver.get( self.base_url )
 
     ##
 
-    def test_temp(self):
-        self.assertEqual( 1, 2 )
+    # def test_temp(self):
+    #     self.assertEqual( 1, 1 )
+
+    ##
+
+    def test_add_article(self):
+        """ Checks for required shib login.
+            Ensures... """
+        driver = self.driver
+        # test for Shib
+        self.assertTrue( u'sso.brown.edu' in driver.current_url )
+        # login
+        print( '- driver.current_url BEFORE shib login, %s' % driver.current_url )
+        driver = self._log_into_shib( driver )
+        # test we've accessed the main faculty work page
+        print( '- driver.current_url AFTER shib login, %s' % driver.current_url )
+        self.assertTrue( u'reserves/cr/faclogin.php' in driver.current_url )
+
 
     # def test_library_staff_login(self):
     #     """ Tests Library Staff login.
@@ -53,6 +72,7 @@ class FacultyAddArticleTest( unittest.TestCase ):
         driver.find_element_by_id("username").send_keys( self.USERNAME )
         driver.find_element_by_id("password").clear()
         driver.find_element_by_id("password").send_keys( self.PASSWORD )
+        driver.find_element_by_css_selector("button[type=\"submit\"]").click()
         return driver
 
     ##
