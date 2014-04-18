@@ -10,10 +10,11 @@ class HomePageLoginTest( unittest.TestCase ):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
-        self.base_url = "https://library.brown.edu/"
+        self.base_url = os.environ.get( 'OCRA_TESTS__LOGIN_BASE_URL' )
+
         # setup
-        self.USERNAME = os.environ.get( 'OCRA__LIBSTAFF_USERNAME' )
-        self.PASSWORD = os.environ.get( 'OCRA__LIBSTAFF_PASSWORD' )
+        self.USERNAME = os.environ.get( 'OCRA_TESTS__LIBSTAFF_USERNAME' )
+        self.PASSWORD = os.environ.get( 'OCRA_TESTS__LIBSTAFF_PASSWORD' )
         # access reserves home page
         self.driver.get(self.base_url + "/reserves/")
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from faculty_add_article_test import FacultyAddArticleTest
+from faculty_add_article_tests import FacultyAddArticleTest
 from home_page_login_tests import HomePageLoginTest
 
 
