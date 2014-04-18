@@ -15,7 +15,8 @@ class FacultyAddArticleTest( unittest.TestCase ):
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
         self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
         self.driver.get( self.base_url )
-        self.test_course_name = 'BJD_TEST_COURSE'
+        self.test_article_name = 'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
+        self.test_article_doi = 'doi:10.1056/NEJMp078206'
 
     ##
 
@@ -25,31 +26,33 @@ class FacultyAddArticleTest( unittest.TestCase ):
         driver = self.driver
 
         # test for Shib
-        self.assertTrue( u'sso.brown.edu' in driver.current_url )
+        self.assertTrue( 'sso.brown.edu' in driver.current_url )
 
         # login
         driver = self._log_into_shib( driver )
 
         # test we've accessed the main faculty work page
-        self.assertTrue( u'reserves/cr/faclogin.php' in driver.current_url )
+        self.assertTrue( 'reserves/cr/faclogin.php' in driver.current_url )
 
         # click the manage-my-reserves link
         driver.find_element_by_name("netid").click()
 
         # test we're at the 'Course Reserves Faculty Interface: Main Menu'
-        self.assertTrue( u'reserves/cr/menu.php' in driver.current_url )
+        self.assertTrue( 'reserves/cr/menu.php' in driver.current_url )
 
         # click the 'Add reserves to a current or upcoming class:' 'Go' button for my 'GRMN 0750E' class
         driver.find_element_by_css_selector("input[type=\"submit\"]").click()
 
         # test we're at the GRMN 0750E class page
-        self.assertTrue( u'reserves/cr/class/?classid=5734' in driver.current_url )
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in driver.current_url )
 
         # test that there's no <table data-restype="article"> element
+        driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
         self.assertEqual(
             False,
-            self._is_css_selector_found( text='table[data-restype="article"]', driver=driver )
+            self._is_css_selector_found( selector_text='table[data-restype="article"]' )
             )
+        driver.implicitly_wait(30)
 
         # click the 'View' link for 'Online Readings'
         driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
@@ -57,31 +60,95 @@ class FacultyAddArticleTest( unittest.TestCase ):
         # test that there is a <table data-restype="article"> element
         self.assertEqual(
             True,
-            self._is_css_selector_found( text='table[data-restype="article"]', driver=driver )
+            self._is_css_selector_found( selector_text='table[data-restype="article"]' )
             )
 
         # get the article html
         article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
 
-        # test that the course to be added is not listed
+        # test that the article to be added is not listed
         self.assertEqual(
             True,
-            self.test_course_name not in article_html
+            self.test_article_name not in article_html
             )
 
         # click the 'Add' link for 'Online Readings'
         driver.find_element_by_xpath("(//a[contains(text(),'Add')])[2]").click()
 
-        # test where we are...
+        # test that we're on the 'What type of material do you want to add?' page
+        self.assertTrue( 'reserves/cr/requestarticle.php' in driver.current_url )
 
+        # click the 'Journal Article link'
+        driver.find_element_by_name("subtask").click()
 
+        # test we're on the 'Enter Journal Article Citation' page
+        self.assertEqual(
+            True,
+            'Enter Journal Article Citation' in driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            )
+
+        # option 1 -- fill out doi & submit
+        driver.find_element_by_id("_doi").clear()
+        driver.find_element_by_id("_doi").send_keys("doi:10.1056/NEJMp078206")
+        driver.find_element_by_id("lookupByID").click()
+
+        # confirm it found an article
+        article_citation_html = driver.find_element_by_css_selector( 'blockquote > p' ).text
+        self.assertEqual(
+            True,
+            self.test_article_name in article_citation_html
+            )
+
+        # request it, _not_ filling out any of the info in the red at the bottom
+        driver.find_element_by_css_selector("#citVerify > form > button[type=\"submit\"]").click()
+
+        # confirm success via url
+        self.assertTrue( 'reserves/cr/class/?classid=5734&success' in driver.current_url )
+
+        # confirm confirmation box on page
+        confirmation_html = article_citation_html = driver.find_element_by_css_selector( 'p.notice.success' ).text
+        self.assertEqual(
+            True,
+            self.test_article_name in confirmation_html
+            )
+
+        # click the 'View' link for 'Online Readings'
+        driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
+
+        # get the article html
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
+
+        # test that the added article is listed
+        self.assertEqual(
+            True,
+            self.test_article_name in article_html
+            )
+
+        # determine delete link
+        article_table_element = driver.find_element_by_css_selector( 'div#articles > table > tbody' )
+        table_rows = article_table_element.find_elements_by_tag_name( 'tr' )
+        target_row_counter = 1  # because xpath call is 1-indexed, not zero-indexed
+        for row in table_rows:
+            if self.test_article_name in row.text:
+                break
+            else:
+                target_row_counter += 1
+        print( '- TARGET ROW COUNTER, %s' % target_row_counter )
+
+        # click the delete link
+        driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
+
+        # test that the added article is no longer listed
+        time.sleep( 1 )  # needed; an immediate check will still show the text of the deleted citation
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
+        self.assertTrue( self.test_article_name not in article_html )
 
     ##
 
-    def _is_css_selector_found( self, text, driver ):
+    def _is_css_selector_found( self, selector_text ):
         """ Helper function to make assert test-statements cleaner. """
         try:
-            driver.find_element_by_css_selector( text )
+            self.driver.find_element_by_css_selector( selector_text )
             return True
         except NoSuchElementException as e:
             return False
