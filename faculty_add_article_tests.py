@@ -2,6 +2,7 @@
 
 import os, re, time, unittest
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 
 class FacultyAddArticleTest( unittest.TestCase ):
@@ -14,11 +15,7 @@ class FacultyAddArticleTest( unittest.TestCase ):
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
         self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
         self.driver.get( self.base_url )
-
-    ##
-
-    # def test_temp(self):
-    #     self.assertEqual( 1, 1 )
+        self.test_course_name = 'BJD_TEST_COURSE'
 
     ##
 
@@ -26,43 +23,68 @@ class FacultyAddArticleTest( unittest.TestCase ):
         """ Checks for required shib login.
             Ensures... """
         driver = self.driver
+
         # test for Shib
         self.assertTrue( u'sso.brown.edu' in driver.current_url )
+
         # login
-        print( '- driver.current_url BEFORE shib login, %s' % driver.current_url )
         driver = self._log_into_shib( driver )
+
         # test we've accessed the main faculty work page
-        print( '- driver.current_url AFTER shib login, %s' % driver.current_url )
         self.assertTrue( u'reserves/cr/faclogin.php' in driver.current_url )
 
+        # click the manage-my-reserves link
+        driver.find_element_by_name("netid").click()
 
-    # def test_library_staff_login(self):
-    #     """ Tests Library Staff login.
-    #         Ensures login button brings up shib, then lands on correct page. """
-    #     driver = self.driver
-    #     # click 'Library Staff Login' button
-    #     driver.find_element_by_xpath("//input[@value='Library Staff Login']").click()
-    #     # test for Shib
-    #     self.assertTrue( u'sso.brown.edu' in driver.current_url )
-    #     # login
-    #     driver = self._log_into_shib( driver )
-    #     # test for lib-staff page
-    #     driver.find_element_by_css_selector("button[type=\"submit\"]").click()
-    #     self.assertTrue( u'reserves/staff/menu.php' in driver.current_url )
+        # test we're at the 'Course Reserves Faculty Interface: Main Menu'
+        self.assertTrue( u'reserves/cr/menu.php' in driver.current_url )
 
-    # def test_itg_staff_login(self):
-    #     """ Tests ITG Staff login
-    #         Ensures login button brings up shib, then lands on correct page. """
-    #     driver = self.driver
-    #     # click 'Library Staff Login' button
-    #     driver.find_element_by_xpath("//input[@value='ITG Staff Login']").click()
-    #     # test for Shib
-    #     self.assertTrue( u'sso.brown.edu' in driver.current_url )
-    #     # login
-    #     driver = self._log_into_shib( driver )
-    #     # test for lib-staff page
-    #     driver.find_element_by_css_selector("button[type=\"submit\"]").click()
-    #     self.assertTrue( u'reserves/staff/menu_itg.php' in driver.current_url )
+        # click the 'Add reserves to a current or upcoming class:' 'Go' button for my 'GRMN 0750E' class
+        driver.find_element_by_css_selector("input[type=\"submit\"]").click()
+
+        # test we're at the GRMN 0750E class page
+        self.assertTrue( u'reserves/cr/class/?classid=5734' in driver.current_url )
+
+        # test that there's no <table data-restype="article"> element
+        self.assertEqual(
+            False,
+            self._is_css_selector_found( text='table[data-restype="article"]', driver=driver )
+            )
+
+        # click the 'View' link for 'Online Readings'
+        driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
+
+        # test that there is a <table data-restype="article"> element
+        self.assertEqual(
+            True,
+            self._is_css_selector_found( text='table[data-restype="article"]', driver=driver )
+            )
+
+        # get the article html
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
+
+        # test that the course to be added is not listed
+        self.assertEqual(
+            True,
+            self.test_course_name not in article_html
+            )
+
+        # click the 'Add' link for 'Online Readings'
+        driver.find_element_by_xpath("(//a[contains(text(),'Add')])[2]").click()
+
+        # test where we are...
+
+
+
+    ##
+
+    def _is_css_selector_found( self, text, driver ):
+        """ Helper function to make assert test-statements cleaner. """
+        try:
+            driver.find_element_by_css_selector( text )
+            return True
+        except NoSuchElementException as e:
+            return False
 
     def _log_into_shib( self, driver ):
         """ Helper function for tests.
@@ -79,7 +101,7 @@ class FacultyAddArticleTest( unittest.TestCase ):
 
     def tearDown(self):
         self.driver.quit()
-
+        # self.assertEqual([], self.verificationErrors)
 
 
 
