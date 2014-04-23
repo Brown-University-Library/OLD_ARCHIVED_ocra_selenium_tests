@@ -4,6 +4,7 @@ import os, pprint, re, time, unittest
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 
 class FacultyAddArticleViaCitationTest( unittest.TestCase ):
@@ -18,6 +19,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
         self.driver.get( self.base_url )
         self.test_article_name = 'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
+        self.journal_title = 'New England Journal of Medicine'
+        self.article_date = '2008'
         #
         # test for Shib
         self.assertTrue( 'sso.brown.edu' in self.driver.current_url )
@@ -146,6 +149,24 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             True,
             details_element.is_displayed() )
 
+        # enter title
+        driver.find_element_by_name("atitle").clear()
+        driver.find_element_by_name("atitle").send_keys( self.test_article_name )
+
+        # enter journal title
+        driver.find_element_by_name("title").clear()
+        driver.find_element_by_name("title").send_keys( self.journal_title )
+
+        # enter date
+        driver.find_element_by_css_selector( 'input[class="req datep inp_date hasDatepicker"]' ).clear()  # can't use `id` because it's dynamic
+        driver.find_element_by_css_selector( 'input[class="req datep inp_date hasDatepicker"]' ).send_keys( self.article_date )
+        driver.find_element_by_css_selector( 'input[class="req datep inp_date hasDatepicker"]' ).send_keys( Keys.TAB )  # submit button not active until leaving required date field.
+
+        # confirm the button is enabled
+        time.sleep( 1 )
+        self.assertEqual(
+            '',
+            button_element.get_attribute( 'class' ) )
 
         1/0
 
