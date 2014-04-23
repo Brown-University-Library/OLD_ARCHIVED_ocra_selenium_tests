@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
 
-class FacultyAddArticleTest( unittest.TestCase ):
+class FacultyAddArticleViaDoiTest( unittest.TestCase ):
     """ Tests adding article. """
 
     def setUp(self):
@@ -20,7 +20,7 @@ class FacultyAddArticleTest( unittest.TestCase ):
 
     ##
 
-    def test_add_article(self):
+    def test_add_article_via_doi(self):
         """ Checks for required shib login.
             Ensures... """
         driver = self.driver
@@ -40,8 +40,9 @@ class FacultyAddArticleTest( unittest.TestCase ):
         # test we're at the 'Course Reserves Faculty Interface: Main Menu'
         self.assertTrue( 'reserves/cr/menu.php' in driver.current_url )
 
-        # click the 'Add reserves to a current or upcoming class:' 'Go' button for my 'GRMN 0750E' class
-        driver.find_element_by_css_selector("input[type=\"submit\"]").click()
+        # click the 'Add reserves to a current or upcoming class:' 'GRMN 0750E' link
+        driver.find_element_by_link_text("GRMN 0750E: Reading Film: An Introduction to German Cinema").click()
+        # driver.find_element_by_css_selector("input[type=\"submit\"]").click()
 
         # test we're at the GRMN 0750E class page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in driver.current_url )
@@ -133,7 +134,7 @@ class FacultyAddArticleTest( unittest.TestCase ):
                 break
             else:
                 target_row_counter += 1
-        print( '- TARGET ROW COUNTER, %s' % target_row_counter )
+        # print( '- TARGET ROW COUNTER, %s' % target_row_counter )
 
         # click the delete link
         driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
@@ -143,7 +144,7 @@ class FacultyAddArticleTest( unittest.TestCase ):
         article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
         self.assertTrue( self.test_article_name not in article_html )
 
-    ##
+    ## helper functions
 
     def _is_css_selector_found( self, selector_text ):
         """ Helper function to make assert test-statements cleaner. """
