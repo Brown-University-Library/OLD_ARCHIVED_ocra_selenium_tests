@@ -43,7 +43,27 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         # test we're at the GRMN 0750E class page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
 
-        # test that there's no <table data-restype="article"> element
+        # click the 'Class Details' link to ensure there is no class password set
+        self.driver.find_element_by_link_text("Class Details").click()
+
+        # confirm we're at the class edit page
+        self.assertTrue( 'reserves/cr/class/edit.php' in self.driver.current_url )
+
+        # clear out the class password field
+        self.driver.find_element_by_name("password").clear()
+
+        # submit the form
+        self.driver.find_element_by_name("task").click()
+
+
+
+
+        time.sleep( 5 )
+
+
+
+
+        # test that there's no <table data-restype="article"> element (no 'Online Readings' view showing)
         self.driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
         self.assertEqual(
             False,
@@ -168,9 +188,66 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             '',
             button_element.get_attribute( 'class' ) )
 
-        1/0
+        # click submit
+        driver.find_element_by_id( 'details_submit_button' ).click()
+
+        # confirm user sees the Copyright info
+        self.assertEqual(
+            True,
+            'Copyright' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            )
+
+        # confirm entered title is shown on copyright page
+        self.assertEqual(
+            True,
+            self.test_article_name in self.driver.find_element_by_css_selector( 'div#maincontent > blockquote' ).text
+            )
+
+        # click the 'The work is a <b>U.S. Government document</b> not protected by copyright' link
+        driver.find_element_by_css_selector( 'button[value="gov doc"]' ).click()
+
+        # confirm we've gotten to the 'Place PDFs on E-Reserves' screen
+        self.assertEqual(
+            True,
+            'Place PDFs on E-Reserves' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            )
+
+        # confirm the 'enter course password' field exists
+        self.assertEqual(
+            True,
+            self._is_css_selector_found( selector_text='input[name="class_password"]' )
+            )
+
+        # confirm the 'pdf upload' section is not visible
+        pdf_upload_element = driver.find_element_by_css_selector( 'div#pdfupload' )
+        self.assertEqual(
+            False,
+            pdf_upload_element.is_displayed() )
+
+        # enter a course password
+        driver.find_element_by_name("class_password").clear()
+        driver.find_element_by_name("class_password").send_keys("1234")
+
+        # confirm the 'pdf upload' section is now visible
+        pdf_upload_element = driver.find_element_by_css_selector( 'div#pdfupload' )
+        self.assertEqual(
+            True,
+            pdf_upload_element.is_displayed() )
+
+        # click the 'zz' option (I'll email later)
+        driver.find_element_by_name("ereserve").click()
+
+        # assert we're back to the course page via url
+
+        # confirm the confirmation block exists
+        self.assertEqual(
+            True,
+            'New article' in self.driver.find_element_by_css_selector( 'p[class="notice success"]' ).text
+            )
 
 
+
+        time.sleep( 5 )
 
 
 
