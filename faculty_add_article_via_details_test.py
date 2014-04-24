@@ -13,10 +13,12 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
         self.driver = webdriver.Firefox()
+        # self.driver = webdriver.PhantomJS()
         self.driver.implicitly_wait(30)
         self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
         self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
+        self.course_password = os.environ.get( 'OCRA_TESTS__COURSE_PASSWORD' )
         self.driver.get( self.base_url )
         self.test_article_name = 'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
         self.journal_title = 'New England Journal of Medicine'
@@ -43,25 +45,23 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         # test we're at the GRMN 0750E class page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
 
-        # click the 'Class Details' link to ensure there is no class password set
+        # click the 'Class Details' link to ensure there is a class password set
         self.driver.find_element_by_link_text("Class Details").click()
 
         # confirm we're at the class edit page
         self.assertTrue( 'reserves/cr/class/edit.php' in self.driver.current_url )
 
-        # clear out the class password field
-        self.driver.find_element_by_name("password").clear()
+        # confirm the class password (this particular flow assumes a password exists)
+        password_element = self.driver.find_element_by_css_selector( 'input[name="password"]' )
+        self.assertEqual(
+            self.course_password,
+            password_element.get_attribute("value") )
 
-        # submit the form
-        self.driver.find_element_by_name("task").click()
+        # hit the back button
+        self.driver.back()
 
-
-
-
-        time.sleep( 5 )
-
-
-
+        # confirm we're back on the x page
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
 
         # test that there's no <table data-restype="article"> element (no 'Online Readings' view showing)
         self.driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
@@ -212,32 +212,19 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             'Place PDFs on E-Reserves' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
             )
 
-        # confirm the 'enter course password' field exists
-        self.assertEqual(
-            True,
-            self._is_css_selector_found( selector_text='input[name="class_password"]' )
-            )
-
-        # confirm the 'pdf upload' section is not visible
-        pdf_upload_element = driver.find_element_by_css_selector( 'div#pdfupload' )
-        self.assertEqual(
-            False,
-            pdf_upload_element.is_displayed() )
-
-        # enter a course password
-        driver.find_element_by_name("class_password").clear()
-        driver.find_element_by_name("class_password").send_keys("1234")
-
-        # confirm the 'pdf upload' section is now visible
+        # confirm the 'pdf upload' section is visible
         pdf_upload_element = driver.find_element_by_css_selector( 'div#pdfupload' )
         self.assertEqual(
             True,
             pdf_upload_element.is_displayed() )
 
-        # click the 'zz' option (I'll email later)
+        # click the 'I will email or upload a PDF at a later time' option
         driver.find_element_by_name("ereserve").click()
 
         # assert we're back to the course page via url
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
+
+
 
         # confirm the confirmation block exists
         self.assertEqual(
@@ -245,67 +232,36 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             'New article' in self.driver.find_element_by_css_selector( 'p[class="notice success"]' ).text
             )
 
+        # click the 'View' link for 'Online Readings'
+        driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
 
+        # get the article html
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
 
-        time.sleep( 5 )
+        # test that the added article is listed
+        self.assertEqual(
+            True,
+            self.test_article_name in article_html
+            )
 
+        # determine delete link
+        article_table_element = driver.find_element_by_css_selector( 'div#articles > table > tbody' )
+        table_rows = article_table_element.find_elements_by_tag_name( 'tr' )
+        target_row_counter = 1  # because xpath call is 1-indexed, not zero-indexed
+        for row in table_rows:
+            if self.test_article_name in row.text:
+                break
+            else:
+                target_row_counter += 1
+        # print( '- TARGET ROW COUNTER, %s' % target_row_counter )
 
+        # click the delete link
+        driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
 
-        # # option 1 -- fill out doi & submit
-        # driver.find_element_by_id("_doi").clear()
-        # driver.find_element_by_id("_doi").send_keys("doi:10.1056/NEJMp078206")
-        # driver.find_element_by_id("lookupByID").click()
-
-        # # confirm it found an article
-        # article_citation_html = driver.find_element_by_css_selector( 'blockquote > p' ).text
-        # self.assertEqual(
-        #     True,
-        #     self.test_article_name in article_citation_html
-        #     )
-
-        # # request it, _not_ filling out any of the info in the red at the bottom
-        # driver.find_element_by_css_selector("#citVerify > form > button[type=\"submit\"]").click()
-
-        # # confirm success via url
-        # self.assertTrue( 'reserves/cr/class/?classid=5734&success' in driver.current_url )
-
-        # # confirm confirmation box on page
-        # confirmation_html = article_citation_html = driver.find_element_by_css_selector( 'p.notice.success' ).text
-        # self.assertEqual(
-        #     True,
-        #     self.test_article_name in confirmation_html
-        #     )
-
-        # # click the 'View' link for 'Online Readings'
-        # driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
-
-        # # get the article html
-        # article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
-
-        # # test that the added article is listed
-        # self.assertEqual(
-        #     True,
-        #     self.test_article_name in article_html
-        #     )
-
-        # # determine delete link
-        # article_table_element = driver.find_element_by_css_selector( 'div#articles > table > tbody' )
-        # table_rows = article_table_element.find_elements_by_tag_name( 'tr' )
-        # target_row_counter = 1  # because xpath call is 1-indexed, not zero-indexed
-        # for row in table_rows:
-        #     if self.test_article_name in row.text:
-        #         break
-        #     else:
-        #         target_row_counter += 1
-        # # print( '- TARGET ROW COUNTER, %s' % target_row_counter )
-
-        # # click the delete link
-        # driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
-
-        # # test that the added article is no longer listed
-        # time.sleep( 1 )  # needed; an immediate check will still show the text of the deleted citation
-        # article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
-        # self.assertTrue( self.test_article_name not in article_html )
+        # test that the added article is no longer listed
+        time.sleep( 1 )  # needed; an immediate check will still show the text of the deleted citation
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
+        self.assertTrue( self.test_article_name not in article_html )
 
     ## helper functions
 
