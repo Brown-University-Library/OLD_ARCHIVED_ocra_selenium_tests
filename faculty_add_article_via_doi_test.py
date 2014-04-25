@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, re, time, unittest
+import os, re, sys, time, unittest
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
@@ -93,14 +93,36 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
         driver.find_element_by_id("_doi").send_keys("doi:10.1056/NEJMp078206")
         driver.find_element_by_id("lookupByID").click()
 
-        # confirm it found an article
-        article_citation_html = driver.find_element_by_css_selector( 'blockquote > p' ).text
-        self.assertEqual(
-            True,
-            self.test_article_name in article_citation_html
-            )
+        # check whether the doi was found
+        sleep_counter = 1
+        doi_found = False
+        while sleep_counter < 15:
+            time.sleep( sleep_counter )
+            driver.implicitly_wait( 1 )
+            try:
+                # confirm it found an article
+                article_citation_html = driver.find_element_by_css_selector( 'blockquote > p' ).text
+                self.assertEqual(
+                    True,
+                    self.test_article_name in article_citation_html
+                    )
+                print( 'DOI found' )
+                doi_found = True
+                driver.implicitly_wait( 30 )
+                break
+            except Exception as e:
+                sleep_counter += 5
+                print( 'DOI not found; sleep_counter, %s' % sleep_counter )
+                pass
 
-        # request it, _not_ filling out any of the info in the red at the bottom
+        # stop test if no doi found
+        if not doi_found:
+            print( 'NOTE: No DOI found; aborting rest of DOI test.' )
+            return
+
+        ## getting here means the doi was found ##
+
+        # request article, _not_ filling out any of the info in the red at the bottom
         driver.find_element_by_css_selector("#citVerify > form > button[type=\"submit\"]").click()
 
         # confirm success via url
