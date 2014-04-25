@@ -12,8 +12,11 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
-        self.driver = webdriver.Firefox()
-        # self.driver = webdriver.PhantomJS()
+        self.driver = None
+        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+            self.driver = webdriver.Firefox()
+        else:
+            self.driver = webdriver.PhantomJS()
         self.driver.implicitly_wait(30)
         self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
@@ -259,7 +262,7 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
 
         # test that the added article is no longer listed
-        time.sleep( 1 )  # needed; an immediate check will still show the text of the deleted citation
+        time.sleep( 2 )  # needed; an immediate check will still show the text of the deleted citation
         article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
         self.assertTrue( self.test_article_name not in article_html )
 

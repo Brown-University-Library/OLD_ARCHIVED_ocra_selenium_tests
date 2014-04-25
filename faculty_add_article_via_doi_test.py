@@ -9,7 +9,11 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
     """ Tests adding article. """
 
     def setUp(self):
-        self.driver = webdriver.Firefox()
+        self.driver = None
+        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+            self.driver = webdriver.Firefox()
+        else:
+            self.driver = webdriver.PhantomJS()
         self.driver.implicitly_wait(30)
         self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )

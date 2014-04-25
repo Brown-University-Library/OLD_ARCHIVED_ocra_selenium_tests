@@ -8,11 +8,13 @@ class HomePageLoginTest( unittest.TestCase ):
     """ Tests home-page login buttons. """
 
     def setUp(self):
-        # self.driver = webdriver.Firefox()
-        self.driver = webdriver.PhantomJS()
+        self.driver = None
+        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+            self.driver = webdriver.Firefox()
+        else:
+            self.driver = webdriver.PhantomJS()
         self.driver.implicitly_wait(30)
         self.base_url = os.environ.get( 'OCRA_TESTS__LOGIN_BASE_URL' )
-        # setup
         self.USERNAME = os.environ.get( 'OCRA_TESTS__LIBSTAFF_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__LIBSTAFF_PASSWORD' )
         # access reserves home page
