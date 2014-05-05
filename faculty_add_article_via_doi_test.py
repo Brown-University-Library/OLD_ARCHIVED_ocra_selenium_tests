@@ -25,8 +25,12 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
     ##
 
     def test_add_article_via_doi(self):
-        """ Checks for required shib login.
-            Ensures... """
+        """ Tests faculty add-article via doi method.
+            Note: specified -- good -- DOI is sometimes found and not-found.
+            Tests that:
+            - both found and not-found paths work as expected.
+            - submitted data exists on subsequent course page.
+            """
         driver = self.driver
 
         # test for Shib
@@ -200,4 +204,4 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    unittest.main( warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
+    unittest.main( verbosity=2, warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>

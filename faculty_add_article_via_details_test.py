@@ -110,7 +110,12 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
     ## work
 
     def test_add_article_via_details(self):
-        """ Tests adding article via detail method. """
+        """ Tests faculty add-article via doi method.
+            Note: specified data entered does not trigger auto-find, so that's not tested.
+            Tests that:
+            - form submit button does not work until required fields are filled out.
+            - submitted data exists on subsequent course page.
+            """
 
         driver = self.driver
 
@@ -227,8 +232,6 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         # assert we're back to the course page via url
         self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
 
-
-
         # confirm the confirmation block exists
         self.assertEqual(
             True,
@@ -296,4 +299,4 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    unittest.main( warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
+    unittest.main( verbosity=2, warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>

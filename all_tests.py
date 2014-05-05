@@ -9,8 +9,8 @@ from home_page_login_test import HomePageLoginTest
 def make_suite():
     """ Assembles suite of tests. """
     test_suite = unittest.TestSuite()
-    test_suite.addTest( unittest.makeSuite(FacultyAddArticleViaDoiTest) )
     test_suite.addTest( unittest.makeSuite(FacultyAddArticleViaCitationTest) )
+    test_suite.addTest( unittest.makeSuite(FacultyAddArticleViaDoiTest) )
     test_suite.addTest( unittest.makeSuite(HomePageLoginTest) )
     return test_suite
 

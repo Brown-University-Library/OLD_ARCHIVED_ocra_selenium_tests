@@ -36,7 +36,7 @@ class HomePageLoginTest( unittest.TestCase ):
         self.assertTrue( u'reserves/staff/menu.php' in driver.current_url )
 
     def test_itg_staff_login(self):
-        """ Tests ITG Staff login
+        """ Tests ITG Staff login.
             Ensures login button brings up shib, then lands on correct page. """
         driver = self.driver
         # click 'Library Staff Login' button
@@ -68,4 +68,4 @@ class HomePageLoginTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    unittest.main( warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
+    unittest.main( verbosity=2, warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
