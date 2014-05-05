@@ -17,5 +17,5 @@ def make_suite():
 full_suite = make_suite()
 
 
-runner=unittest.TextTestRunner()
+runner=unittest.TextTestRunner( verbosity=2 )
 runner.run( full_suite )
