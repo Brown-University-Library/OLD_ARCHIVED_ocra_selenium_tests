@@ -110,7 +110,7 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
     ## work
 
     def test_add_article_via_details(self):
-        """ Tests faculty add-article via doi method.
+        """ Tests faculty add-article via details method.
             Note: specified data entered does not trigger auto-find, so that's not tested.
             Tests that:
             - form submit button does not work until required fields are filled out.
