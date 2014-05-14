@@ -23,9 +23,9 @@ class FacultyBookChapterTest( unittest.TestCase ):
         self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
         self.course_password = os.environ.get( 'OCRA_TESTS__COURSE_PASSWORD' )
         self.driver.get( self.base_url )
-        self.test_article_name = 'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
-        self.journal_title = 'New England Journal of Medicine'
-        self.article_date = '2008'
+        self.book_title = u'Zen and the Art of Motorcycle Maintenance'
+        self.chapte_excerpt_title = u'Chapter 1'
+        self.publication_year = u'1975'
         #
         # test for Shib
         self.assertTrue( 'sso.brown.edu' in self.driver.current_url )
@@ -89,7 +89,7 @@ class FacultyBookChapterTest( unittest.TestCase ):
         # test that the article to be added is not listed
         self.assertEqual(
             True,
-            self.test_article_name not in article_html
+            self.self.book_title not in article_html
             )
 
         # click the 'Add' link for 'Online Readings'
@@ -111,29 +111,38 @@ class FacultyBookChapterTest( unittest.TestCase ):
         driver = self.driver
 
         # click the `Book chapter or excerpt (pdf)` link
-        self.driver.find_element_by_css_selector( u'button.linky[value="excerpt"]' ).click()
+        driver.find_element_by_css_selector( u'button.linky[value="excerpt"]' ).click()
 
         # test we're on the 'Online Readings: Book Excerpt' page
         self.assertEqual(
             True,
-            'Online Readings: Book Excerpt' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            'Online Readings: Book Excerpt' in driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
             )
 
         # test that premature submission yields 'go back' message
         driver.find_element_by_css_selector( u'button' ).click()
         self.assertEqual(
             True,
-            u'go back' in self.driver.find_element_by_css_selector( u'p.notice.error' ).text.lower()
+            u'go back' in driver.find_element_by_css_selector( u'p.notice.error' ).text.lower()
             )
 
         # hit the back button
-        self.driver.back()
+        driver.back()
 
         # test we're on the 'Online Readings: Book Excerpt' page
         self.assertEqual(
             True,
-            'Online Readings: Book Excerpt' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            'Online Readings: Book Excerpt' in driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
             )
+
+        # fill out form
+        driver.find_element_by_id( u"title" ).clear()
+        driver.find_element_by_id( u"title" ).send_keys( self.book_title )
+        driver.find_element_by_id( u"atitle" ).clear()  # chapter/excerpt title field
+        driver.find_element_by_id( u"atitle" ).send_keys( self.chapte_excerpt_title )
+        driver.find_element_by_name( u"date" ).clear()
+        driver.find_element_by_name( u"date" ).send_keys( self.publication_year )
+
 
 
 
