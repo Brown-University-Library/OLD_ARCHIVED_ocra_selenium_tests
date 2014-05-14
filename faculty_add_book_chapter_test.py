@@ -89,7 +89,7 @@ class FacultyBookChapterTest( unittest.TestCase ):
         # test that the article to be added is not listed
         self.assertEqual(
             True,
-            self.self.book_title not in article_html
+            self.book_title not in article_html
             )
 
         # click the 'Add' link for 'Online Readings'
@@ -143,8 +143,78 @@ class FacultyBookChapterTest( unittest.TestCase ):
         driver.find_element_by_name( u"date" ).clear()
         driver.find_element_by_name( u"date" ).send_keys( self.publication_year )
 
+        # submit the form
+        driver.find_element_by_css_selector( u'button' ).click()
 
+        # confirm user sees the Copyright info
+        self.assertEqual(
+            True,
+            'Copyright' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            )
 
+        # confirm entered title is shown on copyright page
+        self.assertEqual(
+            True,
+            self.book_title in self.driver.find_element_by_css_selector( 'div#maincontent > blockquote' ).text
+            )
+
+        # click the 'The work is a <b>U.S. Government document</b> not protected by copyright' link
+        driver.find_element_by_css_selector( 'button[value="gov doc"]' ).click()
+
+        # confirm we've gotten to the 'Place PDFs on E-Reserves' screen
+        self.assertEqual(
+            True,
+            'Place PDFs on E-Reserves' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            )
+
+        # confirm the 'pdf upload' section is visible
+        pdf_upload_element = driver.find_element_by_css_selector( 'div#pdfupload' )
+        self.assertEqual(
+            True,
+            pdf_upload_element.is_displayed() )
+
+        # click the 'I will email or upload a PDF at a later time' option
+        driver.find_element_by_name("ereserve").click()
+
+        # assert we're back to the course page via url
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
+
+        # confirm the confirmation block exists
+        self.assertEqual(
+            True,
+            'New article' in self.driver.find_element_by_css_selector( 'p[class="notice success"]' ).text
+            )
+
+        # click the 'View' link for 'Online Readings'
+        driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
+
+        # get the article html
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
+
+        # test that the added article is listed
+        self.assertEqual(
+            True,
+            self.book_title in article_html
+            )
+
+        # determine delete link
+        article_table_element = driver.find_element_by_css_selector( 'div#articles > table > tbody' )
+        table_rows = article_table_element.find_elements_by_tag_name( 'tr' )
+        target_row_counter = 1  # because xpath call is 1-indexed, not zero-indexed
+        for row in table_rows:
+            if self.book_title in row.text:
+                break
+            else:
+                target_row_counter += 1
+        # print( '- TARGET ROW COUNTER, %s' % target_row_counter )
+
+        # click the delete link
+        driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
+
+        # test that the added article is no longer listed
+        time.sleep( 2 )  # needed; an immediate check will still show the text of the deleted citation
+        article_html = driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
+        self.assertTrue( self.book_title not in article_html )
 
     ## helper functions
 
