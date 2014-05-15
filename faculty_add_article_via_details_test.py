@@ -13,19 +13,19 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
         self.driver = None
-        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+        if os.environ.get( u'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS()
         self.driver.implicitly_wait(30)
-        self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
-        self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
-        self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
-        self.course_password = os.environ.get( 'OCRA_TESTS__COURSE_PASSWORD' )
+        self.USERNAME = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_USERNAME') )
+        self.PASSWORD = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_PASSWORD') )
+        self.base_url = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_START_URL') )
+        self.course_password = unicode( os.environ.get(u'OCRA_TESTS__COURSE_PASSWORD') )
         self.driver.get( self.base_url )
-        self.test_article_name = 'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
-        self.journal_title = 'New England Journal of Medicine'
-        self.article_date = '2008'
+        self.test_article_name = u'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
+        self.journal_title = u'New England Journal of Medicine'
+        self.article_date = u'2008'
         #
         # test for Shib
         self.assertTrue( 'sso.brown.edu' in self.driver.current_url )
@@ -87,6 +87,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         article_html = self.driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
 
         # test that the article to be added is not listed
+        print u'type(self.test_article_name), %s' % type( self.test_article_name )
+        print u'type(article_html), %s' % type( article_html )
         self.assertEqual(
             True,
             self.test_article_name not in article_html
@@ -299,4 +301,6 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    unittest.main( verbosity=2, warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
+    runner = unittest.TextTestRunner( verbosity=2 )
+    unittest.main( testRunner=runner )  # python2
+    # unittest.main( verbosity=2, warnings='ignore' )  # python3; warnings='ignore' from <http://stackoverflow.com/a/21500796>

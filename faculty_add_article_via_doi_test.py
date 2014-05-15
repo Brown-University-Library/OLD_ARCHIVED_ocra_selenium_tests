@@ -10,17 +10,17 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
 
     def setUp(self):
         self.driver = None
-        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+        if os.environ.get( u'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS()
         self.driver.implicitly_wait(30)
-        self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
-        self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )
-        self.base_url = os.environ.get( 'OCRA_TESTS__FACULTY_START_URL' )
+        self.USERNAME = unicode( os.environ.get( u'OCRA_TESTS__FACULTY_USERNAME' ) )
+        self.PASSWORD = unicode( os.environ.get( u'OCRA_TESTS__FACULTY_PASSWORD' ) )
+        self.base_url = unicode( os.environ.get( u'OCRA_TESTS__FACULTY_START_URL' ) )
         self.driver.get( self.base_url )
-        self.test_article_name = 'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
-        self.test_article_doi = 'doi:10.1056/NEJMp078206'
+        self.test_article_name = u'Seeking God in the Brain — Efforts to Localize Higher Brain Functions'
+        self.test_article_doi = u'doi:10.1056/NEJMp078206'
 
     ##
 
@@ -204,4 +204,6 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    unittest.main( verbosity=2, warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
+    runner = unittest.TextTestRunner( verbosity=2 )
+    unittest.main( testRunner=runner )  # python2
+    # unittest.main( verbosity=2, warnings='ignore' )  # python3; warnings='ignore' from <http://stackoverflow.com/a/21500796>
