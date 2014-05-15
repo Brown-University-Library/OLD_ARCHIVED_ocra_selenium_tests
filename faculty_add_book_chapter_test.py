@@ -247,4 +247,6 @@ class FacultyBookChapterTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    unittest.main( verbosity=2, warnings='ignore' )  # warnings='ignore' from <http://stackoverflow.com/a/21500796>
+    runner = unittest.TextTestRunner( verbosity=2 )
+    unittest.main( testRunner=runner )  # python2
+    # unittest.main( verbosity=2, warnings='ignore' )  # python3; warnings='ignore' from <http://stackoverflow.com/a/21500796>
