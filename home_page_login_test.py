@@ -9,16 +9,30 @@ class HomePageLoginTest( unittest.TestCase ):
 
     def setUp(self):
         self.driver = None
-        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+        driver_type = unicode( os.environ.get('OCRA_TESTS__DRIVER_TYPE') )
+        if driver_type == u'firefox':
             self.driver = webdriver.Firefox()
         else:
-            self.driver = webdriver.PhantomJS()
+            self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
         self.driver.implicitly_wait(30)
         self.base_url = os.environ.get( 'OCRA_TESTS__LOGIN_BASE_URL' )
         self.USERNAME = os.environ.get( 'OCRA_TESTS__LIBSTAFF_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__LIBSTAFF_PASSWORD' )
         # access reserves home page
         self.driver.get(self.base_url + "/reserves/")
+
+    # def setUp(self):
+    #     self.driver = None
+    #     if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+    #         self.driver = webdriver.Firefox()
+    #     else:
+    #         self.driver = webdriver.PhantomJS()
+    #     self.driver.implicitly_wait(30)
+    #     self.base_url = os.environ.get( 'OCRA_TESTS__LOGIN_BASE_URL' )
+    #     self.USERNAME = os.environ.get( 'OCRA_TESTS__LIBSTAFF_USERNAME' )
+    #     self.PASSWORD = os.environ.get( 'OCRA_TESTS__LIBSTAFF_PASSWORD' )
+    #     # access reserves home page
+    #     self.driver.get(self.base_url + "/reserves/")
 
     ##
 
