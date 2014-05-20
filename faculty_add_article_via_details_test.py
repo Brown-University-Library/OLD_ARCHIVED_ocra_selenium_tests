@@ -16,7 +16,7 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         if os.environ.get( u'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
             self.driver = webdriver.Firefox()
         else:
-            self.driver = webdriver.PhantomJS()
+            self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
         self.driver.implicitly_wait(30)
         self.USERNAME = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_USERNAME') )
         self.PASSWORD = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_PASSWORD') )
