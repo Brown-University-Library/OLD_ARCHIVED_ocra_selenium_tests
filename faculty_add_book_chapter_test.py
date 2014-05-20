@@ -13,10 +13,11 @@ class FacultyBookChapterTest( unittest.TestCase ):
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
         self.driver = None
-        if os.environ.get( 'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
-            self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
+        driver_type = unicode( os.environ.get('OCRA_TESTS__DRIVER_TYPE') )
+        if driver_type == u'firefox':
+            self.driver = webdriver.Firefox()
         else:
-            self.driver = webdriver.PhantomJS()
+            self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
         self.driver.implicitly_wait(30)
         self.USERNAME = os.environ.get( 'OCRA_TESTS__FACULTY_USERNAME' )
         self.PASSWORD = os.environ.get( 'OCRA_TESTS__FACULTY_PASSWORD' )

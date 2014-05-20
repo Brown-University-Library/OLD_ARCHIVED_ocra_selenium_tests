@@ -10,7 +10,8 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
 
     def setUp(self):
         self.driver = None
-        if os.environ.get( u'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+        driver_type = unicode( os.environ.get('OCRA_TESTS__DRIVER_TYPE') )
+        if driver_type == u'firefox':
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs

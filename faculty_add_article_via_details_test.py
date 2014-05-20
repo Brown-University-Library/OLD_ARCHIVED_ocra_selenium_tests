@@ -13,7 +13,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
         self.driver = None
-        if os.environ.get( u'OCRA_TESTS__DRIVER_TYPE' ) == u'firefox':
+        driver_type = unicode( os.environ.get('OCRA_TESTS__DRIVER_TYPE') )
+        if driver_type == u'firefox':
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
