@@ -1,1 +1,9 @@
+# required python packages
+
+# also, add a .pth file to the env/lib/python/site-packages dir, say, `requirements_ocra.pth`
+# it should contain just one line, a path to the directory _enclosing_ `ocra_functional_tests`
+# like: /path/to/ocra_testing_stuff
+# this will allow code statements like `from ocra_testing_stuff import...` to work.
+
+
 selenium==2.40.0

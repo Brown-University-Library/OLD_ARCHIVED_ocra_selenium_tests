@@ -44,7 +44,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         self.assertTrue( 'reserves/cr/menu.php' in self.driver.current_url )
 
         # click the 'Add reserves to a current or upcoming class:' 'GRMN 0750E' link
-        self.driver.find_element_by_link_text("GRMN 0750E: Reading Film: An Introduction to German Cinema").click()
+        # self.driver.find_element_by_link_text("GRMN 0750E: Reading Film: An Introduction to German Cinema").click()
+        self.driver.find_element_by_partial_link_text("GRMN 0750E: Reading Film: An Introduction to German Cinema").click()
 
         # test we're at the GRMN 0750E class page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
@@ -302,6 +303,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
+    print u'about to run test'
     runner = unittest.TextTestRunner( verbosity=2 )
     unittest.main( testRunner=runner )  # python2
+    print u'test done'
     # unittest.main( verbosity=2, warnings='ignore' )  # python3; warnings='ignore' from <http://stackoverflow.com/a/21500796>
