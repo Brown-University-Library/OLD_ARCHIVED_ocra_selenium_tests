@@ -2,9 +2,10 @@
 
 """ Runs `all_tests.py` whenever a git pull is performed,
       and sends email of results.
-    Called by `ocra_functional_tests/.git/hooks/post-merge` like...
+    Called by `path/to/reserves/.git/hooks/post-merge` which contains the lines...
+      #!/bin/bash
       source path/to/env/bin/activate
-      path/to/env/python path/to/run_tests.py """
+      path/to/env/python path/to/ocra_functional_tests/run_tests.py """
 
 import json, os, pprint, smtplib
 from email.Header import Header
