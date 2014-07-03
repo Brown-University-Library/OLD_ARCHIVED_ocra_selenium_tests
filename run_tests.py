@@ -2,9 +2,10 @@
 
 """ Runs `all_tests.py` whenever a git pull is performed,
       and sends email of results.
-    Called by `ocra_functional_tests/.git/hooks/post-merge` like...
+    Called by `path/to/reserves/.git/hooks/post-merge` which contains the lines...
+      #!/bin/bash
       source path/to/env/bin/activate
-      path/to/env/python path/to/run_tests.py """
+      path/to/env/python path/to/ocra_functional_tests/run_tests.py """
 
 import json, os, pprint, smtplib
 from email.Header import Header
@@ -20,7 +21,7 @@ def run_main():
     r = envoy.run( command.encode(u'utf-8') )  # envoy requires strings
     info = {
         u'std_out': r.std_out.decode(u'utf-8'), u'std_err': r.std_err.decode(u'utf-8'),
-        u'status_code': r.status_code,, u'command': r.command, u'history': r.history }
+        u'status_code': r.status_code, u'command': r.command, u'history': r.history }
     parsed_info = parse_info( info )
     mailer = Mailer()
     mailer.send_email( parsed_info )
@@ -39,19 +40,19 @@ class Mailer( object ):
         self.UTF8_RAW_TO = unicode( os.environ.get(u'OCRA_TESTS__MAIL_TO') )  # json (utf-8) string of a list
         self.UTF8_RAW_FROM = unicode( os.environ.get(u'OCRA_TESTS__MAIL_FROM') )  # utf-8 string
 
-    def send_email( parsed_info ):
+    def send_email( self, parsed_info ):
         """ Sends email. """
-        TO = _build_mail_to( self.UTF8_RAW_TO )  # utf-8
+        TO = self._build_mail_to( self.UTF8_RAW_TO )  # utf-8
         FROM = self.UTF8_RAW_FROM  # utf-8
-        SUBJECT = _build_mail_subject( parsed_info )  # unicode
+        SUBJECT = self._build_mail_subject( parsed_info )  # unicode
         MESSAGE = json.dumps( parsed_info, sort_keys=True, indent=2 )  # utf-8
-        payload = _assemble_payload( TO, FROM, SUBJECT, MESSAGE )
-        s = smtplib.SMTP( 'localhost' )
+        payload = self._assemble_payload( TO, FROM, SUBJECT, MESSAGE )
+        s = smtplib.SMTP( 'localhost', 1025 )
         s.sendmail( FROM, TO, payload.as_string() )
         s.quit()
         return
 
-    def _build_mail_to( UTF8_RAW_TO ):
+    def _build_mail_to( self, UTF8_RAW_TO ):
         """ Builds and returns 'to' list of email addresses.
             Called by send_email() """
         to_emails = json.loads( UTF8_RAW_TO )
@@ -60,13 +61,13 @@ class Mailer( object ):
             utf8_to_list.append( address.encode('utf-8') )
         return utf8_to_list
 
-    def _build_mail_subject( parsed_info ):
+    def _build_mail_subject( self, parsed_info ):
         """ Sets and returns the subject with a success or failure indicator.
             Called by send_email(). """
         unicode_subject = u'subject'
         return unicode_subject
 
-    def _assemble_payload( TO, FROM, SUBJECT, MESSAGE ):
+    def _assemble_payload( self, TO, FROM, SUBJECT, MESSAGE ):
         """ Puts together and returns email payload.
             Called by send_email(). """
         payload = MIMEText( MESSAGE )
