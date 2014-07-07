@@ -5,7 +5,8 @@
     Called by `path/to/reserves/.git/hooks/post-merge` which contains the lines...
       #!/bin/bash
       source path/to/env/bin/activate
-      path/to/env/python path/to/ocra_functional_tests/run_tests.py (this file) """
+      path/to/env/python path/to/run_tests.py (this file)
+    Note: run_tests.py must be executable. """
 
 import json, os, pprint, smtplib
 from email.Header import Header
