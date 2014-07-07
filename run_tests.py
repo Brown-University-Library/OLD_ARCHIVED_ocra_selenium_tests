@@ -33,7 +33,7 @@ def grab_settings():
         Called by run_main(). """
     ALL_TESTS_PATH = unicode( os.environ[u'OCRA_TESTS__ALL_TESTS_PATH'] )
     UTF8_RAW_TO = os.environ[u'OCRA_TESTS__MAIL_TO']  # json string of list of email addresses
-    UTF8_RAW_FROM = os.environ[u'OCRA_TESTS__ALL_TESTS_PATH']
+    UTF8_RAW_FROM = os.environ[u'OCRA_TESTS__MAIL_FROM']
     SMTP_PORT_RAW = os.environ[u'OCRA_TESTS__SMTP_PORT_RAW']  # json string of dict; format like '{"smtp_port": 1025}' (or '{"smtp_port": null}'
     return ( ALL_TESTS_PATH, UTF8_RAW_TO, UTF8_RAW_FROM, SMTP_PORT_RAW )
 
