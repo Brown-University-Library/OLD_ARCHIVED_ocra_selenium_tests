@@ -45,7 +45,7 @@ def parse_info( info ):
     """ Checks test output; returns info-dict.
         Called by run_main(). """
     worthy_text = info[u'std_err']
-    return_dict = { u'message': u'tests output.../n/n%s' % worthy_text }
+    return_dict = { u'message': u'tests output...\n\n%s' % worthy_text }
     segment_start = worthy_text.find( u'Ran ' )
     worthy_slice = worthy_text[segment_start:]
     worthy_slice_cleaned = worthy_slice.strip()
@@ -72,7 +72,7 @@ class Mailer( object ):
         TO = self._build_mail_to()  # utf-8
         FROM = self.UTF8_RAW_FROM  # utf-8
         SUBJECT = self.info_dict[u'subject']  # unicode
-        MESSAGE = json.dumps( self.info_dict, sort_keys=True, indent=2 )  # utf-8
+        MESSAGE = self.info_dict[u'message'].encode( u'utf-8', u'replace' )
         payload = self._assemble_payload( TO, FROM, SUBJECT, MESSAGE )
         s = smtplib.SMTP( 'localhost', json.loads(self.SMTP_PORT_RAW)['smtp_port'] )
         s.sendmail( FROM, TO, payload.as_string() )
@@ -87,12 +87,6 @@ class Mailer( object ):
         for address in to_emails:
             utf8_to_list.append( address.encode('utf-8') )
         return utf8_to_list
-
-    # def _build_mail_subject( self ):
-    #     """ Sets and returns the subject with a success or failure indicator.
-    #         Called by send_email(). """
-    #     unicode_subject = u'the_subject'
-    #     return unicode_subject
 
     def _assemble_payload( self, TO, FROM, SUBJECT, MESSAGE ):
         """ Puts together and returns email payload.

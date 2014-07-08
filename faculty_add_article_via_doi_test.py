@@ -26,8 +26,8 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
     ##
 
     def test_add_article_via_doi(self):
-        """ Tests faculty add-article via detail method.
-            Note: specified -- good -- DOI is sometimes found and not-found.
+        """ Tests faculty add-article via doi method.
+            Note: specified (good) DOI is sometimes found and not-found.
             Tests that:
             - both found and not-found paths work as expected.
             - submitted data exists on subsequent course page.
