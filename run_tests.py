@@ -51,9 +51,9 @@ def parse_info( info ):
     worthy_slice_cleaned = worthy_slice.strip()
     worthy_slice_words = worthy_slice_cleaned.split()
     if worthy_slice_words[-1] == u'OK':
-        return_dict[u'subject'] = u'tests passed'
+        return_dict[u'subject'] = u'ocra interface-tests passed'
     else:
-        return_dict[u'subject'] = u'tests PROBLEM'
+        return_dict[u'subject'] = u'ocra interface-tests PROBLEM'
     return return_dict
 
 

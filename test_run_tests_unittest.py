@@ -27,11 +27,11 @@ class RunTestsTest( unittest.TestCase ):
             sorted( result_dict.keys() )
             )
         self.assertEqual(
-            u'tests passed',
+            u'ocra interface-tests passed',
             result_dict[u'subject']
             )
         self.assertEqual(
-            u'tests output.../n/n' + info_dict[u'std_err'],
+            u'tests output...\n\n' + info_dict[u'std_err'],
             result_dict[u'message']
             )
 
@@ -54,11 +54,11 @@ class RunTestsTest( unittest.TestCase ):
             sorted( result_dict.keys() )
             )
         self.assertEqual(
-            u'tests PROBLEM',
+            u'ocra interface-tests PROBLEM',
             result_dict[u'subject']
             )
         self.assertEqual(
-            u'tests output.../n/n' + info_dict[u'std_err'],
+            u'tests output...\n\n' + info_dict[u'std_err'],
             result_dict[u'message']
             )
 
@@ -81,11 +81,11 @@ class RunTestsTest( unittest.TestCase ):
             sorted( result_dict.keys() )
             )
         self.assertEqual(
-            u'tests PROBLEM',
+            u'ocra interface-tests PROBLEM',
             result_dict[u'subject']
             )
         self.assertEqual(
-            u'tests output.../n/n' + info_dict[u'std_err'],
+            u'tests output...\n\n' + info_dict[u'std_err'],
             result_dict[u'message']
             )
 
