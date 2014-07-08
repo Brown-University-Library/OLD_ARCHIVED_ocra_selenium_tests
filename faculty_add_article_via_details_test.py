@@ -89,8 +89,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         article_html = self.driver.find_element_by_css_selector( 'table[data-restype="article"]' ).text
 
         # test that the article to be added is not listed
-        print u'type(self.test_article_name), %s' % type( self.test_article_name )
-        print u'type(article_html), %s' % type( article_html )
+        # print u'type(self.test_article_name), %s' % type( self.test_article_name )
+        # print u'type(article_html), %s' % type( article_html )
         self.assertEqual(
             True,
             self.test_article_name not in article_html
@@ -303,8 +303,8 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
 
 if __name__ == "__main__":
-    print u'about to run test'
+    # print u'about to run test'
     runner = unittest.TextTestRunner( verbosity=2 )
     unittest.main( testRunner=runner )  # python2
-    print u'test done'
+    # print u'test done'
     # unittest.main( verbosity=2, warnings='ignore' )  # python3; warnings='ignore' from <http://stackoverflow.com/a/21500796>

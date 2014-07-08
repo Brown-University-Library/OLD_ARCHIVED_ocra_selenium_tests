@@ -38,11 +38,23 @@ def grab_settings():
     SMTP_PORT_RAW = os.environ[u'OCRA_TESTS__SMTP_PORT_RAW']  # json string of dict; format like '{"smtp_port": 1025}' (or '{"smtp_port": null}'
     return ( ALL_TESTS_PATH, UTF8_RAW_TO, UTF8_RAW_FROM, SMTP_PORT_RAW )
 
+# def parse_info( info ):
+#     return info
 
 def parse_info( info ):
     """ Checks test output; returns info-dict.
         Called by run_main(). """
-    return info
+    worthy_text = info[u'std_err']
+    return_dict = { u'message': u'tests output.../n/n%s' % worthy_text }
+    segment_start = worthy_text.find( u'Ran ' )
+    worthy_slice = worthy_text[segment_start:]
+    worthy_slice_cleaned = worthy_slice.strip()
+    worthy_slice_words = worthy_slice_cleaned.split()
+    if worthy_slice_words[-1] == u'OK':
+        return_dict[u'subject'] = u'tests passed'
+    else:
+        return_dict[u'subject'] = u'tests PROBLEM'
+    return return_dict
 
 
 class Mailer( object ):
@@ -59,7 +71,7 @@ class Mailer( object ):
         """ Sends email. """
         TO = self._build_mail_to()  # utf-8
         FROM = self.UTF8_RAW_FROM  # utf-8
-        SUBJECT = self._build_mail_subject()  # unicode
+        SUBJECT = self.info_dict[u'subject']  # unicode
         MESSAGE = json.dumps( self.info_dict, sort_keys=True, indent=2 )  # utf-8
         payload = self._assemble_payload( TO, FROM, SUBJECT, MESSAGE )
         s = smtplib.SMTP( 'localhost', json.loads(self.SMTP_PORT_RAW)['smtp_port'] )
@@ -76,11 +88,11 @@ class Mailer( object ):
             utf8_to_list.append( address.encode('utf-8') )
         return utf8_to_list
 
-    def _build_mail_subject( self ):
-        """ Sets and returns the subject with a success or failure indicator.
-            Called by send_email(). """
-        unicode_subject = u'the_subject'
-        return unicode_subject
+    # def _build_mail_subject( self ):
+    #     """ Sets and returns the subject with a success or failure indicator.
+    #         Called by send_email(). """
+    #     unicode_subject = u'the_subject'
+    #     return unicode_subject
 
     def _assemble_payload( self, TO, FROM, SUBJECT, MESSAGE ):
         """ Puts together and returns email payload.
