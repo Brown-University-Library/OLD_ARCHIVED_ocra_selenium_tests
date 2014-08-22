@@ -50,7 +50,7 @@ class FacultyAddArticleViaDoiTest( unittest.TestCase ):
         self.assertTrue( 'reserves/cr/menu.php' in driver.current_url )
 
         # click the 'Add reserves to a current or upcoming class:' 'GRMN 0750E' link
-        driver.find_element_by_partial_link_text("GRMN 0750E: Reading Film: An Introduction to German Cinema").click()
+        driver.find_element_by_partial_link_text("GRMN 0750E").click()  # Reading Film: An Introduction to German Cinema
 
         # test we're at the GRMN 0750E class page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in driver.current_url )

@@ -44,7 +44,7 @@ class FacultyBookChapterTest( unittest.TestCase ):
         self.assertTrue( 'reserves/cr/menu.php' in self.driver.current_url )
 
         # click the 'Add reserves to a current or upcoming class:' 'GRMN 0750E' link
-        self.driver.find_element_by_partial_link_text("GRMN 0750E: Reading Film: An Introduction to German Cinema").click()
+        self.driver.find_element_by_partial_link_text("GRMN 0750E").click()  # Reading Film: An Introduction to German Cinema
 
         # test we're at the GRMN 0750E class page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
