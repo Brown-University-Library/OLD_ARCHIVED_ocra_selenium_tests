@@ -38,8 +38,6 @@ def grab_settings():
     SMTP_PORT_RAW = os.environ[u'OCRA_TESTS__SMTP_PORT_RAW']  # json string of dict; format like '{"smtp_port": 1025}' (or '{"smtp_port": null}'
     return ( ALL_TESTS_PATH, UTF8_RAW_TO, UTF8_RAW_FROM, SMTP_PORT_RAW )
 
-# def parse_info( info ):
-#     return info
 
 def parse_info( info ):
     """ Checks test output; returns info-dict.
@@ -104,14 +102,3 @@ class Mailer( object ):
 
 if __name__ == "__main__":
     run_main()
-
-
-
-
-# import runpy
-# runpy.run_module( 'ocra_functional_tests.faculty_add_article_via_details_test' )
-
-# try:
-#     execfile( u'/path/to/all_tests.py' )
-# except Exception as e:
-#     print u'ERROR-----: %s' % unicode( repr(e) )

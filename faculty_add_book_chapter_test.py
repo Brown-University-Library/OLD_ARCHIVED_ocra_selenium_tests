@@ -40,7 +40,7 @@ class FacultyBookChapterTest( unittest.TestCase ):
         # click the manage-my-reserves link
         self.driver.find_element_by_name("netid").click()
 
-        # test we're at the 'Course Reserves Faculty Interface: Main Menu'
+        # test we're at the 'Course Reserves Faculty Interface: Course Overview'
         self.assertTrue( 'reserves/cr/menu.php' in self.driver.current_url )
 
         # click the 'Add reserves to a current or upcoming class:' 'GRMN 0750E' link
@@ -64,10 +64,10 @@ class FacultyBookChapterTest( unittest.TestCase ):
         # hit the back button
         self.driver.back()
 
-        # confirm we're back on the x page
+        # confirm we're back on the 'Course Overview' page
         self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
 
-        # test that there's no <table data-restype="article"> element (no 'Online Readings' view showing)
+        # test that there's no <table data-restype="article"> element (no 'Online Readings' drop-down content showing)
         self.driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
         self.assertEqual(
             False,
@@ -198,7 +198,13 @@ class FacultyBookChapterTest( unittest.TestCase ):
             self.book_title in article_html
             )
 
-        # determine delete link
+        # test that the date is listed
+        self.assertEqual(
+            True,
+            self.publication_year in article_html
+            )
+
+        # determine the row (and counter) for the entry we just added -- needed so that later we can say "find the delete links and click the 2nd one"
         article_table_element = driver.find_element_by_css_selector( 'div#articles > table > tbody' )
         table_rows = article_table_element.find_elements_by_tag_name( 'tr' )
         target_row_counter = 1  # because xpath call is 1-indexed, not zero-indexed
@@ -207,7 +213,45 @@ class FacultyBookChapterTest( unittest.TestCase ):
                 break
             else:
                 target_row_counter += 1
-        # print( '- TARGET ROW COUNTER, %s' % target_row_counter )
+
+
+
+
+        # click the Edit link to make sure it works
+        driver.find_element_by_xpath( "(//a[contains(text(),'Edit')])[%s]" % target_row_counter ).click()
+        # print ( u'Edit clicked; waiting...' )
+        html_element = driver.find_element_by_css_selector( 'html' )
+        # print ( u'html_element.text..., %s' % html_element.text )
+        self.assertEqual(
+            True,
+            u'Not Found' not in html_element.text
+            )
+
+        # go back to Overview page
+        driver.back
+
+        # confirm we're back on the 'Course Overview' page
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
+
+        # test that there's no <table data-restype="article"> element (no 'Online Readings' drop-down content showing)
+        self.driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
+        self.assertEqual(
+            False,
+            self._is_css_selector_found( selector_text='table[data-restype="article"]' )
+            )
+        self.driver.implicitly_wait(30)  # just resetting to default
+
+        # click the 'View' link for 'Online Readings'
+        self.driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
+
+        # test that there is a <table data-restype="article"> element
+        self.assertEqual(
+            True,
+            self._is_css_selector_found( selector_text='table[data-restype="article"]' )
+            )
+
+
+
 
         # click the delete link
         driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
