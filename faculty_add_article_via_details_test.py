@@ -195,7 +195,7 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
         driver.find_element_by_css_selector( 'input[class="req datep inp_date hasDatepicker"]' ).send_keys( Keys.TAB )  # submit button not active until leaving required date field.
 
         # confirm the button is enabled
-        time.sleep( 1 )
+        time.sleep( 2 )
         self.assertEqual(
             '',
             button_element.get_attribute( 'class' ) )

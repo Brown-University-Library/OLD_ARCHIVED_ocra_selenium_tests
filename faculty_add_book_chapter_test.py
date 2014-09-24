@@ -150,13 +150,13 @@ class FacultyBookChapterTest( unittest.TestCase ):
         # confirm user sees the Copyright info
         self.assertEqual(
             True,
-            'Copyright' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            'Copyright' in driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
             )
 
         # confirm entered title is shown on copyright page
         self.assertEqual(
             True,
-            self.book_title in self.driver.find_element_by_css_selector( 'div#maincontent > blockquote' ).text
+            self.book_title in driver.find_element_by_css_selector( 'div#maincontent > blockquote' ).text
             )
 
         # click the 'The work is a <b>U.S. Government document</b> not protected by copyright' link
@@ -165,7 +165,7 @@ class FacultyBookChapterTest( unittest.TestCase ):
         # confirm we've gotten to the 'Place PDFs on E-Reserves' screen
         self.assertEqual(
             True,
-            'Place PDFs on E-Reserves' in self.driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
+            'Place PDFs on E-Reserves' in driver.find_element_by_css_selector( 'div#maincontent > h3' ).text
             )
 
         # confirm the 'pdf upload' section is visible
@@ -178,12 +178,12 @@ class FacultyBookChapterTest( unittest.TestCase ):
         driver.find_element_by_name("ereserve").click()
 
         # assert we're back to the course page via url
-        self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in driver.current_url )
 
         # confirm the confirmation block exists
         self.assertEqual(
             True,
-            'New article' in self.driver.find_element_by_css_selector( 'p[class="notice success"]' ).text
+            'New article' in driver.find_element_by_css_selector( 'p[class="notice success"]' ).text
             )
 
         # click the 'View' link for 'Online Readings'
@@ -214,8 +214,8 @@ class FacultyBookChapterTest( unittest.TestCase ):
             else:
                 target_row_counter += 1
 
-
-
+        # store current url to easily get back here
+        before_edit_url = driver.current_url
 
         # click the Edit link to make sure it works
         driver.find_element_by_xpath( "(//a[contains(text(),'Edit')])[%s]" % target_row_counter ).click()
@@ -228,30 +228,27 @@ class FacultyBookChapterTest( unittest.TestCase ):
             )
 
         # go back to Overview page
-        driver.back
+        driver.get( before_edit_url )
 
         # confirm we're back on the 'Course Overview' page
-        self.assertTrue( 'reserves/cr/class/?classid=5734' in self.driver.current_url )
+        self.assertTrue( 'reserves/cr/class/?classid=5734' in driver.current_url )
 
         # test that there's no <table data-restype="article"> element (no 'Online Readings' drop-down content showing)
-        self.driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
+        driver.implicitly_wait(2)  # because I'm asserting False, and it'll wait until the timeout
         self.assertEqual(
             False,
             self._is_css_selector_found( selector_text='table[data-restype="article"]' )
             )
-        self.driver.implicitly_wait(30)  # just resetting to default
+        driver.implicitly_wait(30)  # just resetting to default
 
         # click the 'View' link for 'Online Readings'
-        self.driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
+        driver.find_element_by_xpath("(//a[contains(text(),'View')])[2]").click()
 
         # test that there is a <table data-restype="article"> element
         self.assertEqual(
             True,
             self._is_css_selector_found( selector_text='table[data-restype="article"]' )
             )
-
-
-
 
         # click the delete link
         driver.find_element_by_xpath( "(//a[contains(text(),'Delete')])[%s]" % target_row_counter ).click()
