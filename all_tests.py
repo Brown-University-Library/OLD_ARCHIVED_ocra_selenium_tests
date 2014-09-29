@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime, unittest
+from api_test import ApiTest
 from faculty_add_article_via_details_test import FacultyAddArticleViaCitationTest
 from faculty_add_article_via_doi_test import FacultyAddArticleViaDoiTest
 from faculty_add_book_chapter_test import FacultyBookChapterTest
@@ -10,6 +11,7 @@ from home_page_login_test import HomePageLoginTest
 def make_suite():
     """ Assembles suite of tests. """
     test_suite = unittest.TestSuite()
+    test_suite.addTest( unittest.makeSuite(ApiTest) )
     test_suite.addTest( unittest.makeSuite(FacultyAddArticleViaCitationTest) )
     test_suite.addTest( unittest.makeSuite(FacultyAddArticleViaDoiTest) )
     test_suite.addTest( unittest.makeSuite(FacultyBookChapterTest) )
