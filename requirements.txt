@@ -10,4 +10,5 @@
 
 
 envoy==0.0.2
+requests==2.4.1
 selenium==2.40.0
