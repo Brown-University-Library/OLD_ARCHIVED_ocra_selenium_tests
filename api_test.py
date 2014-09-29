@@ -19,7 +19,7 @@ class ApiTest( unittest.TestCase ):
     ## work
 
     def test_good_api_call(self):
-        """ Tests known good submission. """
+        """ Tests api, good submission. """
         url = u'%s/COURSE:LITR:0710:2014-Fall:S01:/201410' % self.api_base_url
         r = requests.get( url )
         # print u'url, `%s`' % r.url
@@ -31,7 +31,7 @@ class ApiTest( unittest.TestCase ):
             r.status_code )
 
     def test_ocra_course_missing(self):
-        """ Tests grouper-course w/o an ocra entry. """
+        """ Tests api, grouper-course w/o ocra entry. """
         url = u'%s/COURSE:AFRI:1700C:2014-Fall:S01/201410' % self.api_base_url
         r = requests.get( url )
         # print u'url, `%s`' % r.url
