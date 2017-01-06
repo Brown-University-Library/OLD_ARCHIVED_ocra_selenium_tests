@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import os, pprint, re, time, unittest
+from __future__ import unicode_literals
+
+import logging, logging.config, os, pprint, re, sys, time, unittest
+
+project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append( project_path )
+
+from ocra_functional_tests import settings
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+
+logging.config.dictConfig( settings.LOGGING_CONF_DCT )
+logger = logging.getLogger(__name__)
+logger.info( 'HERE01' )
+logger.debug( 'HERE02' )
 
 
 class FacultyAddArticleViaCitationTest( unittest.TestCase ):
