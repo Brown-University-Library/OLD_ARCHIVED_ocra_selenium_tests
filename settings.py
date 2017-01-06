@@ -4,8 +4,6 @@ from __future__ import unicode_literals
 import json, os, pprint
 
 
-print 'HERE-A'
-
 API_BASE_URL = unicode( os.environ.get(u'OCRA_TESTS__API_BASE_URL') )
 
 LOG_PATH = unicode( os.environ.get('OCRA_TESTS__LOG_PATH') )
@@ -46,6 +44,3 @@ LOGGING_CONF_DCT = json.loads(
     '''
     )
 LOGGING_CONF_DCT['handlers']['logfile']['filename'] = LOG_PATH
-
-print 'LOGGING_CONF_DCT, ```{}```'.format( pprint.pformat(LOGGING_CONF_DCT) )
-

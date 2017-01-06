@@ -14,9 +14,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 logging.config.dictConfig( settings.LOGGING_CONF_DCT )
-logger = logging.getLogger(__name__)
-logger.info( 'HERE01' )
-logger.debug( 'HERE02' )
+log = logging.getLogger(__name__)
 
 
 class FacultyAddArticleViaCitationTest( unittest.TestCase ):
@@ -24,12 +22,14 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
+        log.debug( 'starting setUp()' )
         self.driver = None
         driver_type = unicode( os.environ.get('OCRA_TESTS__DRIVER_TYPE') )
         if driver_type == u'firefox':
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
+        log.debug( 'driver created' )
         self.driver.implicitly_wait(30)
         self.USERNAME = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_USERNAME') )
         self.PASSWORD = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_PASSWORD') )
@@ -132,7 +132,7 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             - form submit button does not work until required fields are filled out.
             - submitted data exists on subsequent course page.
             """
-
+        log.debug( 'starting test_add_article_via_details()' )
         driver = self.driver
 
         # confirm the 'details search' view is not shown
