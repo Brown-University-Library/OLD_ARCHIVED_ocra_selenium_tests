@@ -7,7 +7,7 @@ import logging, logging.config, os, pprint, re, sys, time, unittest
 project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append( project_path )
 
-from ocra_functional_tests import settings
+from ocra_selenium_tests import settings
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
