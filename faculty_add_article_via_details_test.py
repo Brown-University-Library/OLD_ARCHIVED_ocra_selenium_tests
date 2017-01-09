@@ -29,6 +29,13 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
+        # try:
+        #     if driver_type == u'firefox':
+        #         self.driver = webdriver.Firefox()
+        #     else:
+        #         self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
+        # except Exception as e:
+        #     log.error( 'problem creating driver, ```{}```'.format(unicode(repr(e))) )
         log.debug( 'driver created' )
         self.driver.implicitly_wait(30)
         self.USERNAME = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_USERNAME') )
