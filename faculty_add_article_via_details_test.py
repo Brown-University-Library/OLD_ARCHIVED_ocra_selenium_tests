@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import os, pprint, re, time, unittest
+from __future__ import unicode_literals
+
+import logging, logging.config, os, pprint, re, sys, time, unittest
+
+project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append( project_path )
+
+from ocra_functional_tests import settings
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+
+logging.config.dictConfig( settings.LOGGING_CONF_DCT )
+log = logging.getLogger(__name__)
 
 
 class FacultyAddArticleViaCitationTest( unittest.TestCase ):
@@ -12,12 +22,21 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
 
     def setUp(self):
         """ Initializes and gets us to the add-journal-article page. """
+        log.debug( 'starting setUp()' )
         self.driver = None
         driver_type = unicode( os.environ.get('OCRA_TESTS__DRIVER_TYPE') )
         if driver_type == u'firefox':
             self.driver = webdriver.Firefox()
         else:
             self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
+        # try:
+        #     if driver_type == u'firefox':
+        #         self.driver = webdriver.Firefox()
+        #     else:
+        #         self.driver = webdriver.PhantomJS( u'%s' % driver_type )  # will be path to phantomjs
+        # except Exception as e:
+        #     log.error( 'problem creating driver, ```{}```'.format(unicode(repr(e))) )
+        log.debug( 'driver created' )
         self.driver.implicitly_wait(30)
         self.USERNAME = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_USERNAME') )
         self.PASSWORD = unicode( os.environ.get(u'OCRA_TESTS__FACULTY_PASSWORD') )
@@ -120,7 +139,7 @@ class FacultyAddArticleViaCitationTest( unittest.TestCase ):
             - form submit button does not work until required fields are filled out.
             - submitted data exists on subsequent course page.
             """
-
+        log.debug( 'starting test_add_article_via_details()' )
         driver = self.driver
 
         # confirm the 'details search' view is not shown
