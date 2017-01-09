@@ -1,7 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import os, re, time, unittest
+from __future__ import unicode_literals
+
+import logging, logging.config, os, re, sys, time, unittest
+
+project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append( project_path )
+
+from ocra_selenium_tests import settings
 from selenium import webdriver
+
+
+logging.config.dictConfig( settings.LOGGING_CONF_DCT )
+log = logging.getLogger(__name__)
 
 
 class HomePageLoginTest( unittest.TestCase ):
